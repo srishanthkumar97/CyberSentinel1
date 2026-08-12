@@ -1,0 +1,4 @@
+# Neither the config file or its backup should go
+
+# Used by pytest
+tests/__pycache__/

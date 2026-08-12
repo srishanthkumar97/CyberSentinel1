@@ -1,0 +1,19 @@
+Write the tutorials
+
+Name the links in More Information part of each vulnerability (present in index.php of each vulnerability)
+
+Change the images in dom based xss attack.
+
+This playlist has demonstrations of all these attacks (https://www.youtube.com/playlist?list=PLHUKi1UlEgOJLPSFZaFKMoexpM6qhOb4Q)
+
+Add dark mode (change background from white to black, then text color accordingly)
+
+Add setupw to instructions.php and all the front facing pages.
+
+Add consequences of each attack
+
+Add the docker container to packages or using actions or deployments inside actions
+
+Add a good wiki page, test out the releases feature
+
+Add sign up and registration

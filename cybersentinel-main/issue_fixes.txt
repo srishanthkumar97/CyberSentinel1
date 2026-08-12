@@ -1,0 +1,61 @@
+PERSISTANT
+
+**The logs code in sentinelPage.inc.php, was causing too many redirects error preventing user from reaching setup.php.
+I had to change code in many places which might cause database not found errors and no redirection to setup, if sentinel 
+database is dropped and user is still in some page. (logs.php is having this issue).
+
+**Checking for username existance and such**
+The method used is to give a sql query to search for input username and check for it in a table. It uses mysql_num_rows==1.
+But for now, it's possible to insert duplicate users, which is a intendend vulnerability (for auth bypass).
+The logic mysql_num_rows==1, will not allow duplicate users to login, delete or anything. So we should use mysql_num_rows!=0, if we
+want to introduce the vulnerability.
+Various levels of login.php pages can be made to make it more tougher to create duplicate users in the future.
+
+**Fake admin**
+Create a fake admin account which should have the username admin. Now, when you try to delete the original admin user, or even the
+fake admin, if you provide your fake admin password (which you should know ideally), you will get 'Incorrect password, user not deleted.'
+Because, the first entry will be that of the original admin, but the your fake password won't match with the original admin's password.
+
+**HELP and SOURCE buttons not responding**
+I found out that the help and source button inside vulnerabilities are not working as expected. Should look into this issue later.
+
+FIXED
+
+**Do you already have another mysqld server running on port: 3306?**
+https://stackoverflow.com/questions/68065284/specified-port-3306-is-already-in-use-when-installing-mysql
+This error occurs when you start xampp. Apache server started fine, but MySQL gave did not. When I opened the logs, I saw this:
+
+Can't start server: Bind on TCP/IP port: Address already in use
+Do you already have another mysqld server running on port: 3306 ?
+Aborting
+
+To fix this error, follow these steps:
+Go to services or task manager, you will find a service called mysql80 running, stop it. Change it's startup type to manual. Restart xampp.
+
+**Uncaught mysqli_sql_exception: Unknown database 'sentinel' in some\path\sentinelPage.inc.php:512**
+This error occurs when you try to open one of the vulnerabilities requring a database (Command Injection). The solution is simple,
+you have to setup a database first. Go to Setup/Reset DB, there click on the "Create/Reset Database" button. You might need to scroll
+down to see this button.
+
+**Changes in github repo not reflected when git clone is used in docker**
+When you are using the application as a docker image, you will be using git clone to get the repository into the docker.
+But the newer changes are not being updated, atleast not instantly.
+A temporary fix for this is:
+You can go to exec inside the container using docker desktop application. Once there, run the below command.
+cd app/cybersentinel && git pull
+A better and more permanent fix would be to add the above command into the dockerfile and update the dockerhub repo.
+I have to figure out how to do that when free.
+
+**Database not selected**
+I reintroduced the user table by changing disable_authentication to false in config.inc.php. Then to make the flow: any db requiring page,
+setup, login; I had to make some changes. After that, the queries were not able to get the database name. So I added a statement before
+lines having "$result = mysqli_query". The statement is "mysqli_select_db($GLOBALS["___mysqli_ston"], "sentinel" );".
+To make the above statement accept variable db name, use this (may not always work, worked in login.php): 
+"mysqli_select_db($GLOBALS["___mysqli_ston"],  $_SENTINEL[ 'db_database' ] );"
+
+**Undefined global variable $___mysqli_ston in sentinelPage.inc.php**
+This error occurs due to database not being initialized. Add this code to fix it: sentinelDatabaseConnect();
+
+**Weak password hash**
+This application uses md5($password), to hash the password. This is insecure. But as this application aims to be insecure, we go along with it.
+If you want a more secure way, use this password_hash($password, PASSWORD_DEFAULT). 
